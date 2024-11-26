@@ -4,8 +4,8 @@ on:
       - main
     paths:
       - .github/workflows/build-caddy.yaml
-      - caddy/BUILD
-      - caddy/VERSION
+      - packages/caddy/BUILD
+      - packages/caddy/VERSION
 
 env:
   GO_VERSION: 1.23.3
@@ -21,8 +21,8 @@ jobs:
 
       - name: Read version
         run: |
-          echo "CADDY_VERSION=$(cat caddy/VERSION)" >> $GITHUB_ENV
-          echo "CADDY_BUILD=$(cat caddy/BUILD)" >> $GITHUB_ENV
+          echo "CADDY_VERSION=$(cat packages/caddy/VERSION)" >> $GITHUB_ENV
+          echo "CADDY_BUILD=$(cat packages/caddy/BUILD)" >> $GITHUB_ENV
 
       - name: Install go
         uses: actions/setup-go@v4
