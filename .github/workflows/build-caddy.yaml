@@ -55,7 +55,10 @@ jobs:
           gh release create \
             --repo ${{ github.repository }} \
             --title "Caddy v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}" \
-            --notes "Caddy v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }} / linux / amd64" \
-            caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.*
+            --notes "Caddy v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }} / linux / amd64" 
+            v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}
+            caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.zip
+            caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.sha256
+
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
