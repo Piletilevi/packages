@@ -47,6 +47,9 @@ jobs:
         run: |
           sha256sum caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.zip > caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.sha256
 
+      - name: ls
+        run: ls -la
+
       - name: Upload release
         run: |
           gh release create \
