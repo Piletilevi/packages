@@ -1,0 +1,59 @@
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/build-caddy.yaml
+      - packages/caddy/BUILD
+      - packages/caddy/VERSION
+
+env:
+  GO_VERSION: 1.23.3
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        run: |
+          echo "CADDY_VERSION=$(cat packages/caddy/VERSION)" >> $GITHUB_ENV
+          echo "CADDY_BUILD=$(cat packages/caddy/BUILD)" >> $GITHUB_ENV
+
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Install xcaddy
+        run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+
+      - name: Build caddy
+        run: |
+          xcaddy build v${{ env.CADDY_VERSION }} \
+            --with github.com/pberkel/caddy-storage-redis@v1.4.0
+        env:
+          GOPATH: ${{ runner.workspace }}/go
+
+      - name: Generate zip
+        run: |
+          zip caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.zip caddy
+
+      - name: Generate checksum
+        run: |
+          sha256sum caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.zip > caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.sha256
+
+      - name: Upload release
+        run: |
+          gh release create \
+            --repo ${{ github.repository }} \
+            --title "Caddy v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}" \
+            --notes "Caddy v${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }} / linux / amd64" \
+            caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.zip \
+            caddy-${{ env.CADDY_VERSION }}-${{ env.CADDY_BUILD }}-linux-amd64.sha256
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
