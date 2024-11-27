@@ -35,7 +35,8 @@ jobs:
       - name: Build caddy
         run: |
           xcaddy build v${{ env.CADDY_VERSION }} \
-            --with github.com/pberkel/caddy-storage-redis@v1.4.0
+            --with github.com/pberkel/caddy-storage-redis@v1.4.0 \
+            --with github.com/pteich/caddy-tlsconsul@v1.5.0
         env:
           GOPATH: ${{ runner.workspace }}/go
 
